@@ -1,35 +1,22 @@
 package com.gmail.chiuchohin;
 
 import com.gmail.chiuchohin.Config.TreeConfig;
+import com.gmail.chiuchohin.item.ModCreativeModTabs;
+import com.gmail.chiuchohin.item.ModItems;
+import com.gmail.chiuchohin.Config.CropConfig;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -42,28 +29,41 @@ public class BiomeSpecificGrowth
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static TreeConfig TREECONFIG;
+    public static CropConfig CROPCONFIG;
 
     public BiomeSpecificGrowth()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModItems.register(modEventBus);
+
+        ModCreativeModTabs.register(modEventBus);
+        
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TreeConfig.SPEC,  MODID+"-common-config.toml");
 
-        TREECONFIG = new TreeConfig(TreeConfig.SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common-config.toml"));
+        TREECONFIG = new TreeConfig(TreeConfig.SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-Tree-common-config.toml"));
+        CROPCONFIG = new CropConfig(CropConfig.SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-Crop-common-config.toml"));
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new GrowEvents());
+        MinecraftForge.EVENT_BUS.register(new ToolTipEvent());
         
+        modEventBus.addListener(this::addCreative);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
     }
 
+    private void addCreative(BuildCreativeModeTabContentsEvent event){
+        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES){
+            event.accept(ModItems.GROWTH_INSPECTOR);
+        }
+    }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent

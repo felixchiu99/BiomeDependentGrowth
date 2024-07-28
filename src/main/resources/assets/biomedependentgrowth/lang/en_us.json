@@ -1,0 +1,7 @@
+{
+    "item.biomedependentgrowth.growth_inspector": "Biome Growth Inspector",
+
+    "creativetab.biome_growth_tab": "Biome Dependant Growth",
+
+    "tooltip.biomedependentgrowth.growth_inspector.tooltip": "Give Biome and Growth information when clicked."
+}

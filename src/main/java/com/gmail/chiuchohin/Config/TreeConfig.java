@@ -24,7 +24,9 @@ public class TreeConfig
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final String DELIM = "->";
     public static final ForgeConfigSpec SPEC;
-    public static final ForgeConfigSpec.ConfigValue<Integer> EXAMPLE_INTEGER;
+    public static final ForgeConfigSpec.ConfigValue<Float> SAPLING_SUCCESS_RATE;
+
+    public static final ForgeConfigSpec.ConfigValue<Boolean> SAPLING_TURN_DEAD_WHEN_FAIL;
     
     public static final ForgeConfigSpec.ConfigValue<List<String>> SAPLING_WHITELIST_BIOMES;
 
@@ -40,11 +42,13 @@ public class TreeConfig
     static {
         BUILDER.push("BiomeSpecificGrowth Tree Configs");
 
-        EXAMPLE_INTEGER = BUILDER.comment("Here is where your example integer comment will go.").define("Example Integer", 0);
+        SAPLING_SUCCESS_RATE = BUILDER.comment("Sapling Growth Rate At Incorrect Biome. (Default: 0.2)").define("Sapling Success Rate", 0.2f);
+        
+        SAPLING_TURN_DEAD_WHEN_FAIL = BUILDER.comment("Will Saplings turn into a Dead bush when grow attempt failed. (Default: true)").define("Dead on failed", true);
         
         List<String> mSaplingWhiteList = new ArrayList<>();
         {
-            mSaplingWhiteList.add(Blocks.ACACIA_SAPLING.toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.ACACIA_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:savanna", 
                 "minecraft:shattered_savanna", 
                 "minecraft:shattered_savanna_plateau", 
@@ -52,14 +56,14 @@ public class TreeConfig
                 "minecraft:modified_wooded_badlands_plateau",
                 "minecraft:wooded_badlands_plateau"
             }));
-            mSaplingWhiteList.add(Blocks.BIRCH_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.BIRCH_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:birch_forest", 
                 "minecraft:forest", 
                 "minecraft:birch_forest_hills", 
                 "minecraft:tall_birch_forest", 
                 "minecraft:tall_birch_hills" 
             }));
-            mSaplingWhiteList.add(Blocks.SPRUCE_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.SPRUCE_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:taiga", 
                 "minecraft:giant_tree_taiga", 
                 "minecraft:snowy_tundra", 
@@ -68,7 +72,7 @@ public class TreeConfig
                 "minecraft:snowy_taiga_hills",
                 "minecraft:giant_tree_taiga_hills" 
             }));
-            mSaplingWhiteList.add(Blocks.OAK_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.OAK_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:forest", 
                 "minecraft:dark_forest", 
                 "minecraft:wooded_mountains", 
@@ -77,12 +81,12 @@ public class TreeConfig
                 "minecraft:swamp_hills", 
                 "minecraft:flower_forest"
             }));
-            mSaplingWhiteList.add(Blocks.DARK_OAK_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.DARK_OAK_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:dark_forest", 
                 "minecraft:dark_forest_hills", 
                 "minecraft:flower_forest"
             }));
-            mSaplingWhiteList.add(Blocks.JUNGLE_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.JUNGLE_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:jungle_edge", 
                 "minecraft:jungle", 
                 "minecraft:jungle_hills", 
@@ -92,10 +96,10 @@ public class TreeConfig
                 "minecraft:modified_jungle_edge", 
                 "minecraft:modified_jungle" 
             }));
-            mSaplingWhiteList.add(Blocks.CHERRY_SAPLING.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.CHERRY_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:cherry_grove"
             }));
-            mSaplingWhiteList.add(Blocks.MANGROVE_PROPAGULE.getName().toString() + DELIM + String.join(",", new String[] {
+            mSaplingWhiteList.add(Blocks.MANGROVE_PROPAGULE.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:swamp"
             }));
         }
@@ -112,7 +116,7 @@ public class TreeConfig
 
     public List<String> getBiomesForSapling(Block block) {
         Map<String, List<String>> mapInit = this.getMapBiome(SAPLING_WHITELIST_BIOMES);
-        String key = block.getName().toString();
+        String key = block.getDescriptionId();
         if (mapInit.containsKey(key) == false) {
             //null means no list set, so everything allowed
             return null;
@@ -120,6 +124,7 @@ public class TreeConfig
         //my list is allowed
         return mapInit.get(key);
     }
+
     public Map<String, List<String>> getMapBiome(ForgeConfigSpec.ConfigValue<List<String>> conf) {
         final Map<String, List<String>> mapInit = new HashMap<>();
         for (String splitme : conf.get()) {
