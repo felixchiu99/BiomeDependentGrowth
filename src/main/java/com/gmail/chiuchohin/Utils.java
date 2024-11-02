@@ -2,7 +2,6 @@ package com.gmail.chiuchohin;
 
 import java.util.List;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
@@ -13,7 +12,7 @@ public class Utils
       if (mc.player != null) {
         mc.player.displayClientMessage(Component.literal(message), true);
       }
-      mc.close();
+      //mc.close();
     }
 
     public static boolean isInRange(float fromBiome, float fromCrop, float acceptedVariance){
@@ -22,16 +21,12 @@ public class Utils
       return fromBiome >= lowTolerance && fromBiome <= highTolerance ;
     }
 
-    public static boolean isInList(final List<String> list, ResourceLocation toMatch) {
-      if (toMatch == null) {
-        return false;
-      }
-      String id = toMatch.getNamespace();
+    public static boolean isInList(final List<String> list, String toMatch) {
       for (String strFromList : list) {
         if (strFromList == null || strFromList.isEmpty()) {
           continue;
         }
-        if (strFromList.equals(id)) {
+        if (strFromList.equals(toMatch)) {
           return true;
         }
         String[] blockIdArray = strFromList.split(":");
@@ -40,8 +35,12 @@ public class Utils
         }
         String modIdFromList = blockIdArray[0];
         String blockIdFromList = blockIdArray[1];
-        String modIdToMatch = toMatch.getNamespace();
-        String blockIdToMatch = toMatch.getPath();
+        String[] blockToMatch = toMatch.split(":");
+        if (blockToMatch.length <= 1) {
+          return false;
+        }
+        String modIdToMatch = blockToMatch[0];
+        String blockIdToMatch = blockToMatch[1];
         if (modIdFromList.equals(modIdToMatch) == false) {
           continue;
         }

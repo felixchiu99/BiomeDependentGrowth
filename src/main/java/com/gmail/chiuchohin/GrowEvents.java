@@ -69,7 +69,7 @@ public class GrowEvents
         Block block = world.getBlockState(pos).getBlock();
         Biome biome = getBiome(world, pos);
         if(!isTreeAllowed(world, block, biome)){
-            Utils.toastMessage("Seems like this Plant does not grow well this biome. Temp: " + biome.getModifiedClimateSettings().temperature());
+            Utils.toastMessage("Seems like this Plant does not grow well this biome.");
         }
     }
 
@@ -81,7 +81,7 @@ public class GrowEvents
         }
 
         Registry<Biome> biomeReg = world.registryAccess().registryOrThrow(Registries.BIOME);
-        boolean treeAllowedToGrow = Utils.isInList(allowed, biomeReg.getKey(biome));
+        boolean treeAllowedToGrow = Utils.isInList(allowed, biomeReg.getKey(biome).getNamespace() + ":" + biomeReg.getKey(biome).getPath());
         if(treeAllowedToGrow){
             return true;
         }

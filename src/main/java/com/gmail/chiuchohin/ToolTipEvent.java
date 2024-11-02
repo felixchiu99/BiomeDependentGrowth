@@ -2,14 +2,10 @@ package com.gmail.chiuchohin;
 
 import java.util.List;
 
-import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags.Blocks;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,8 +27,8 @@ public class ToolTipEvent
 
 
 
-        MutableComponent component = Component.literal("This is a test");
-        event.getToolTip().add(component);
+        //MutableComponent component = Component.literal("This is a test");
+        //event.getToolTip().add(component);
     }
 
     private void DisplayCrop(String blockID, ItemTooltipEvent event){
@@ -50,15 +46,15 @@ public class ToolTipEvent
         float downfallVariance = variance.get(1);
 
         MutableComponent tempComponent = (Component.literal("Temperature Range: ").withStyle(ChatFormatting.GREEN))
-            .append(Component.literal(""+(baseTemperature-tempVariance)).withStyle(ChatFormatting.WHITE))
+            .append(Component.literal("" + String.format("%.02f", (baseTemperature-tempVariance)) ).withStyle(ChatFormatting.WHITE))
             .append(Component.literal("-").withStyle(ChatFormatting.WHITE))
-            .append(Component.literal(""+(baseTemperature+tempVariance)).withStyle(ChatFormatting.WHITE))
+            .append(Component.literal("" + String.format("%.02f", (baseTemperature+tempVariance)) ).withStyle(ChatFormatting.WHITE))
             ;
         event.getToolTip().add(tempComponent);
         MutableComponent downfallComponent = (Component.literal("Downfall Range: ").withStyle(ChatFormatting.AQUA))
-            .append(Component.literal(""+(baseDownfall-downfallVariance)).withStyle(ChatFormatting.WHITE))
+            .append(Component.literal("" + String.format("%.02f", (baseDownfall-downfallVariance)) ).withStyle(ChatFormatting.WHITE))
             .append(Component.literal("-").withStyle(ChatFormatting.WHITE))
-            .append(Component.literal(""+(baseDownfall+downfallVariance)).withStyle(ChatFormatting.WHITE))
+            .append(Component.literal("" + String.format("%.02f", (baseDownfall+downfallVariance)) ).withStyle(ChatFormatting.WHITE))
             ;
         event.getToolTip().add(downfallComponent);
     }
