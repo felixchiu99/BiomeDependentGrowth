@@ -153,6 +153,11 @@ public class CropConfig
                 "0.3",
                 "0.5"
             }));
+            mCropCharacteristicList.add(
+                "block.brewery.corn_crop" + DELIM + String.join(",", new String[] {
+                "0.8",
+                "0.4"
+            }));
             
             //let's do winery
             mCropCharacteristicList.add(
@@ -250,6 +255,11 @@ public class CropConfig
                 DELIM + 
                 "block.brewery.hops_crop"
             );
+            mCropItemMap.add(
+                "item.brewery.corn_seed" + 
+                DELIM + 
+                "block.brewery.corn_crop"
+            );
             
             //Let's do vinery
             mCropItemMap.add(
@@ -344,6 +354,14 @@ public class CropConfig
             );
             mCropVariationList.add(
                 "block.brewery.hops_crop_body"
+                + DELIM + String.join(","
+                , new String[] {
+                    "0.4",
+                    "0.4"
+                })
+            );
+            mCropVariationList.add(
+                "block.brewery.corn_crop"
                 + DELIM + String.join(","
                 , new String[] {
                     "0.4",
