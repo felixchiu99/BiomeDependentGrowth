@@ -47,13 +47,13 @@ public class ToolTipEvent
 
         MutableComponent tempComponent = (Component.literal("Temperature Range: ").withStyle(ChatFormatting.GREEN))
             .append(Component.literal("" + String.format("%.02f", (baseTemperature-tempVariance)) ).withStyle(ChatFormatting.WHITE))
-            .append(Component.literal("-").withStyle(ChatFormatting.WHITE))
+            .append(Component.literal(" - ").withStyle(ChatFormatting.WHITE))
             .append(Component.literal("" + String.format("%.02f", (baseTemperature+tempVariance)) ).withStyle(ChatFormatting.WHITE))
             ;
         event.getToolTip().add(tempComponent);
         MutableComponent downfallComponent = (Component.literal("Downfall Range: ").withStyle(ChatFormatting.AQUA))
             .append(Component.literal("" + String.format("%.02f", (baseDownfall-downfallVariance)) ).withStyle(ChatFormatting.WHITE))
-            .append(Component.literal("-").withStyle(ChatFormatting.WHITE))
+            .append(Component.literal(" - ").withStyle(ChatFormatting.WHITE))
             .append(Component.literal("" + String.format("%.02f", (baseDownfall+downfallVariance)) ).withStyle(ChatFormatting.WHITE))
             ;
         event.getToolTip().add(downfallComponent);

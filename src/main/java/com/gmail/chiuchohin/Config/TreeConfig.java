@@ -8,6 +8,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.fml.common.Mod;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import com.gmail.chiuchohin.BiomeSpecificGrowth;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Forge's config APIs
+// In some config class
 @Mod.EventBusSubscriber(modid = BiomeSpecificGrowth.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TreeConfig
 {
@@ -38,14 +40,39 @@ public class TreeConfig
     private static final BooleanValue ISDEBUG;
 
     public TreeConfig(ForgeConfigSpec spec, Path path) {
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+        File file = new File(path.toFile(), path.getFileName().toString());
+
+        CommentedFileConfig configData;
+
+        if(!file.exists()){
+            configData = CommentedFileConfig.builder(path)
             .sync()
             .autosave()
             .writingMode(WritingMode.REPLACE)
             .build();
+        }else{
+            configData = CommentedFileConfig.builder(path)
+            .sync()
+            .autosave()
+            .build();
+        }
+
         configData.load();
         spec.setConfig(configData);
     }
+
+    // public TreeConfig(ForgeConfigSpec.Builder builder) {
+
+    //     final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+    //         .sync()
+    //         .autosave()
+    //         .writingMode(WritingMode.REPLACE)
+    //         .build();
+
+    //     configData.load();
+    //     spec.setConfig(configData);
+    // }
+
     static {
         BUILDER.push("BiomeSpecificGrowth Tree Configs");
 

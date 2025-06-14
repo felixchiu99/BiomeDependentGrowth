@@ -8,6 +8,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.fml.common.Mod;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,12 +46,24 @@ public class CropConfig
 
     private static final BooleanValue ISDEBUG;
     
-    public CropConfig(ForgeConfigSpec spec, Path path) {
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+    public CropConfig(ForgeConfigSpec spec, Path path)  {
+        File file = new File(path.toFile(), path.getFileName().toString());
+
+        CommentedFileConfig configData;
+
+        if(!file.exists()){
+            configData = CommentedFileConfig.builder(path)
             .sync()
             .autosave()
             .writingMode(WritingMode.REPLACE)
             .build();
+        }else{
+            configData = CommentedFileConfig.builder(path)
+            .sync()
+            .autosave()
+            .build();
+        }
+
         configData.load();
         spec.setConfig(configData);
     }
@@ -558,6 +571,7 @@ public class CropConfig
         List<Float> varianceList = getVarianceForCrop(key);
         return varianceList;
     }
+    
     public List<Float> getVarianceForCrop(String key) {
         Map<String, List<String>> mapInit = this.getMapCharacteristics(CROP_VARIATIONS);
         List<Float> varianceList = new ArrayList<>();

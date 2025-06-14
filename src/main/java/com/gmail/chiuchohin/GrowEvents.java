@@ -68,7 +68,13 @@ public class GrowEvents
         BlockPos pos = event.getPos();
         Block block = world.getBlockState(pos).getBlock();
         Biome biome = getBiome(world, pos);
+        //boolean replaceWithDead = TreeConfig.SAPLING_TURN_DEAD_WHEN_FAIL.get().booleanValue();
         if(!isTreeAllowed(world, block, biome)){
+            // if(replaceWithDead){
+            //     Utils.toastMessage("Seems like this Plant does not grow well this biome. replace");
+            // }else{
+            //     Utils.toastMessage("Seems like this Plant does not grow well this biome. no replace");
+            // }
             Utils.toastMessage("Seems like this Plant does not grow well this biome.");
         }
     }

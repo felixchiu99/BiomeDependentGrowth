@@ -1,23 +1,30 @@
 package com.gmail.chiuchohin;
 
 import com.gmail.chiuchohin.Config.TreeConfig;
+import com.gmail.chiuchohin.Config.CropConfig;
+
 import com.gmail.chiuchohin.item.ModCreativeModTabs;
 import com.gmail.chiuchohin.item.ModItems;
-import com.gmail.chiuchohin.Config.CropConfig;
-import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.CreativeModeTabs;
+
 import net.minecraftforge.api.distmarker.Dist;
+
 import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import org.slf4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiomeSpecificGrowth.MODID)
@@ -25,8 +32,8 @@ public class BiomeSpecificGrowth
 {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "biomedependentgrowth";
-    // Directly reference a slf4j logger
-    public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static Logger LOGGER = LogManager.getLogger();
 
     public static TreeConfig TREECONFIG;
     public static CropConfig CROPCONFIG;
@@ -41,8 +48,6 @@ public class BiomeSpecificGrowth
         
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-        //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TreeConfig.SPEC,  MODID+"-common-config.toml");
 
         TREECONFIG = new TreeConfig(TreeConfig.SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-Tree-common-config.toml"));
         CROPCONFIG = new CropConfig(CropConfig.SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-Crop-common-config.toml"));
