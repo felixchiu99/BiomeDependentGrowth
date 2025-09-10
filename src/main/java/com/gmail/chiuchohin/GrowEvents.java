@@ -113,21 +113,21 @@ public class GrowEvents
     }
 
     public static boolean isCropAllowed(LevelAccessor world, Block block, Biome biome){
-        List<Float> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(block);
+        List<Double> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(block);
         if (allowed == null) {
             //nothing listed for this plant, everythings fine stop blocking the event
             return true;
         }
-        float baseTemperature = allowed.get(0);
-        float baseDownfall = allowed.get(1);
+        Double baseTemperature = allowed.get(0);
+        Double baseDownfall = allowed.get(1);
 
-        List<Float> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(block);
+        List<Double> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(block);
 
-        float tempVariance = variance.get(0);
-        float downfallVariance = variance.get(1);
+        Double tempVariance = variance.get(0);
+        Double downfallVariance = variance.get(1);
 
-        boolean tempInRange = Utils.isInRange(biome.getModifiedClimateSettings().temperature(), baseTemperature, tempVariance);
-        boolean downfallInRange = Utils.isInRange(biome.getModifiedClimateSettings().downfall(), baseDownfall, downfallVariance);
+        boolean tempInRange = Utils.isInRange( (double) biome.getModifiedClimateSettings().temperature(), baseTemperature, tempVariance);
+        boolean downfallInRange = Utils.isInRange( (double) biome.getModifiedClimateSettings().downfall(), baseDownfall, downfallVariance);
         if(tempInRange && downfallInRange){
             /* 
             if (Minecraft.getInstance().player != null) {

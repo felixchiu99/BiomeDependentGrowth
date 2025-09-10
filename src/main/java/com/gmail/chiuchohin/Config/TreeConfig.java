@@ -29,7 +29,7 @@ public class TreeConfig
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final String DELIM = "->";
     public static final ForgeConfigSpec SPEC;
-    public static final ForgeConfigSpec.ConfigValue<Float> SAPLING_SUCCESS_RATE;
+    public static final ForgeConfigSpec.ConfigValue<Double> SAPLING_SUCCESS_RATE;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> SAPLING_TURN_DEAD_WHEN_FAIL;
     
@@ -76,7 +76,7 @@ public class TreeConfig
     static {
         BUILDER.push("BiomeSpecificGrowth Tree Configs");
 
-        SAPLING_SUCCESS_RATE = BUILDER.comment("Sapling Growth Rate At Incorrect Biome. (Default: 0.2)").define("Sapling Success Rate", 0.2f);
+        SAPLING_SUCCESS_RATE = BUILDER.comment("Sapling Growth Rate At Incorrect Biome. (Default: 0.2)").define("Sapling Success Rate", 0.2d);
         
         SAPLING_TURN_DEAD_WHEN_FAIL = BUILDER.comment("Will Saplings turn into a Dead bush when grow attempt failed. (Default: true)").define("Dead on failed", true);
         

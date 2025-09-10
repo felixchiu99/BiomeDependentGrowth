@@ -32,18 +32,18 @@ public class ToolTipEvent
     }
 
     private void DisplayCrop(String blockID, ItemTooltipEvent event){
-        List<Float> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(blockID);
+        List<Double> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(blockID);
         if (allowed == null) {
             //nothing listed for this plant, everythings fine stop blocking the event
             return;
         }
-        float baseTemperature = allowed.get(0);
-        float baseDownfall = allowed.get(1);
+        Double baseTemperature = allowed.get(0);
+        Double baseDownfall = allowed.get(1);
 
-        List<Float> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(blockID);
+        List<Double> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(blockID);
 
-        float tempVariance = variance.get(0);
-        float downfallVariance = variance.get(1);
+        Double tempVariance = variance.get(0);
+        Double downfallVariance = variance.get(1);
 
         MutableComponent tempComponent = (Component.literal("Temperature Range: ").withStyle(ChatFormatting.GREEN))
             .append(Component.literal("" + String.format("%.02f", (baseTemperature-tempVariance)) ).withStyle(ChatFormatting.WHITE))

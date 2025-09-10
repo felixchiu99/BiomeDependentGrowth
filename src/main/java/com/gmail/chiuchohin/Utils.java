@@ -15,9 +15,9 @@ public class Utils
       //mc.close();
     }
 
-    public static boolean isInRange(float fromBiome, float fromCrop, float acceptedVariance){
-      float highTolerance = fromCrop + acceptedVariance;
-      float lowTolerance = fromCrop - acceptedVariance;
+    public static boolean isInRange(Double fromBiome, Double fromCrop, Double acceptedVariance){
+      Double highTolerance = fromCrop + acceptedVariance;
+      Double lowTolerance = fromCrop - acceptedVariance;
       return fromBiome >= lowTolerance && fromBiome <= highTolerance ;
     }
 
@@ -51,7 +51,7 @@ public class Utils
       }
       return false;
     }
-    public static boolean isChanceSuccess(float successPercentage){
+    public static boolean isChanceSuccess(Double successPercentage){
       successPercentage = successPercentage>1?1:successPercentage;
       successPercentage = successPercentage<0?0:successPercentage;
       var rand = Math.random();

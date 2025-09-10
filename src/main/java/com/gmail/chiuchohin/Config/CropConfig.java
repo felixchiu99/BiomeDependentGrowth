@@ -28,14 +28,14 @@ public class CropConfig
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final String DELIM = "->";
     public static final ForgeConfigSpec SPEC;
-    public static final ForgeConfigSpec.ConfigValue<Float> CROP_SUCCESS_RATE;
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_SUCCESS_RATE;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> CROP_BREAK_WHEN_FAIL;
 
-    public static final ForgeConfigSpec.ConfigValue<Float> CROP_DEFAULT_TEMP;
-    public static final ForgeConfigSpec.ConfigValue<Float> CROP_DEFAULT_TEMP_TOLERANCE;
-    public static final ForgeConfigSpec.ConfigValue<Float> CROP_DEFAULT_DOWNFALL;
-    public static final ForgeConfigSpec.ConfigValue<Float> CROP_DEFAULT_DOWNFALL_TOLERANCE;
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_TEMP;
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_TEMP_TOLERANCE;
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_DOWNFALL;
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_DOWNFALL_TOLERANCE;
     
     public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_WHITELIST_BIOMES;
 
@@ -70,12 +70,12 @@ public class CropConfig
     static {
         BUILDER.push("BiomeSpecificGrowth Crop Configs");
 
-        CROP_SUCCESS_RATE = BUILDER.comment("Crop Growth Rate At Incorrect Biome. (Default: 0.2)").define("Crop Success Rate", 0.2f);
+        CROP_SUCCESS_RATE = BUILDER.comment("Crop Growth Rate At Incorrect Biome. (Default: 0.2)").define("Crop Success Rate", 0.2d);
         
-        CROP_DEFAULT_TEMP = BUILDER.comment("Crop Default Temperature. (Default: 0.5)").define("Crop Default Temperature", 0.5f);
-        CROP_DEFAULT_TEMP_TOLERANCE = BUILDER.comment("Crop Tolerance to Temperature.(+/-) (Default: 0.3)").define("Crop Temperature Tolerance", 0.3f);
-        CROP_DEFAULT_DOWNFALL = BUILDER.comment("Crop Default Downfall. (Default: 0.5)").define("Crop Default Downfall", 0.5f);
-        CROP_DEFAULT_DOWNFALL_TOLERANCE = BUILDER.comment("Crop Tolerance to Downfall.(+/-) (Default: 0.3)").define("Crop Downfall Tolerance", 0.3f);
+        CROP_DEFAULT_TEMP = BUILDER.comment("Crop Default Temperature. (Default: 0.5)").define("Crop Default Temperature", 0.5d);
+        CROP_DEFAULT_TEMP_TOLERANCE = BUILDER.comment("Crop Tolerance to Temperature.(+/-) (Default: 0.3)").define("Crop Temperature Tolerance", 0.3d);
+        CROP_DEFAULT_DOWNFALL = BUILDER.comment("Crop Default Downfall. (Default: 0.5)").define("Crop Default Downfall", 0.5d);
+        CROP_DEFAULT_DOWNFALL_TOLERANCE = BUILDER.comment("Crop Tolerance to Downfall.(+/-) (Default: 0.3)").define("Crop Downfall Tolerance", 0.3d);
 
         CROP_BREAK_WHEN_FAIL = BUILDER.comment("Will Crop break when grow event failed. (Default: false)").define("Dead on failed",false);
 
@@ -533,18 +533,18 @@ public class CropConfig
         SPEC = BUILDER.build();
     }
 
-    public List<Float> getCharacteristicsForCrop(Block block) {
+    public List<Double> getCharacteristicsForCrop(Block block) {
         String key = block.getDescriptionId();
-        List<Float> characteristicsList = getCharacteristicsForCrop(key);
+        List<Double> characteristicsList = getCharacteristicsForCrop(key);
         return characteristicsList;
     }
 
-    public List<Float> getCharacteristicsForCrop(String key) {
+    public List<Double> getCharacteristicsForCrop(String key) {
         Map<String, List<String>> mapInit = this.getMapCharacteristics(CROP_CHARACTERISTICS);
-        float temp = CROP_DEFAULT_TEMP_TOLERANCE.get();
-        float downfall = CROP_DEFAULT_DOWNFALL_TOLERANCE.get();
+        double temp = CROP_DEFAULT_TEMP_TOLERANCE.get();
+        double downfall = CROP_DEFAULT_DOWNFALL_TOLERANCE.get();
 
-        List<Float> characteristicsList = new ArrayList<>();
+        List<Double> characteristicsList = new ArrayList<>();
 
         if (mapInit.containsKey(key) == false) {
             //null means no list set, so everything allowed
@@ -566,18 +566,18 @@ public class CropConfig
         return characteristicsList;
     }
 
-    public List<Float> getVarianceForCrop(Block block) {
+    public List<Double> getVarianceForCrop(Block block) {
         String key = block.getDescriptionId();
-        List<Float> varianceList = getVarianceForCrop(key);
+        List<Double> varianceList = getVarianceForCrop(key);
         return varianceList;
     }
     
-    public List<Float> getVarianceForCrop(String key) {
+    public List<Double> getVarianceForCrop(String key) {
         Map<String, List<String>> mapInit = this.getMapCharacteristics(CROP_VARIATIONS);
-        List<Float> varianceList = new ArrayList<>();
+        List<Double> varianceList = new ArrayList<>();
 
-        float tempVariance = CROP_DEFAULT_TEMP_TOLERANCE.get();
-        float downfallVariance = CROP_DEFAULT_DOWNFALL_TOLERANCE.get();
+        double tempVariance = CROP_DEFAULT_TEMP_TOLERANCE.get();
+        double downfallVariance = CROP_DEFAULT_DOWNFALL_TOLERANCE.get();
 
         if (mapInit.containsKey(key) == false) {
             varianceList.add(tempVariance);

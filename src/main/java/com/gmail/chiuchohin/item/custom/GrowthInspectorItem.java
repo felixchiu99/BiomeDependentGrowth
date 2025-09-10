@@ -129,22 +129,22 @@ public class GrowthInspectorItem extends Item
     }
 
     private void CheckCrop(Player player, Block block, Biome biome){
-        List<Float> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(block);
+        List<Double> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(block);
         if (allowed == null) {
             //nothing listed for this plant, everythings fine stop blocking the event
             return;
         }
-        float baseTemperature = allowed.get(0);
-        float baseDownfall = allowed.get(1);
+        Double baseTemperature = allowed.get(0);
+        Double baseDownfall = allowed.get(1);
 
-        List<Float> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(block);
+        List<Double> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(block);
         boolean blockBreak = BiomeSpecificGrowth.CROPCONFIG.GetCropBreak();
 
-        float tempVariance = variance.get(0);
-        float downfallVariance = variance.get(1);
+        Double tempVariance = variance.get(0);
+        Double downfallVariance = variance.get(1);
 
-        boolean tempInRange = Utils.isInRange(biome.getModifiedClimateSettings().temperature(), baseTemperature, tempVariance);
-        boolean downfallInRange = Utils.isInRange(biome.getModifiedClimateSettings().downfall(), baseDownfall, downfallVariance);
+        boolean tempInRange = Utils.isInRange( (double) biome.getModifiedClimateSettings().temperature(), baseTemperature, tempVariance);
+        boolean downfallInRange = Utils.isInRange( (double) biome.getModifiedClimateSettings().downfall(), baseDownfall, downfallVariance);
         MutableComponent component = Component.literal("This crop ");
         if(tempInRange && downfallInRange){
             component
@@ -177,7 +177,7 @@ public class GrowthInspectorItem extends Item
     }
 
     private void DisplayCrop(Player player, String blockID, Biome biome){
-        float res[] = DisplayCrop(player, blockID);
+        Double res[] = DisplayCrop(player, blockID);
         if(res == null){
             return;
         }
@@ -186,7 +186,7 @@ public class GrowthInspectorItem extends Item
 
         String tempBiomeText = "";
         var tempColour = ChatFormatting.GREEN;
-        float tempBiome = biome.getModifiedClimateSettings().temperature();
+        Double tempBiome = (double) biome.getModifiedClimateSettings().temperature();
         boolean suitableTemp = true;
         if( tempBiome < (res[0] - res[1])){
             tempBiomeText += "too cold";
@@ -207,7 +207,7 @@ public class GrowthInspectorItem extends Item
 
         String downfallBiomeText = "";
         var downfallColour = ChatFormatting.GREEN;
-        float downfallBiome = biome.getModifiedClimateSettings().downfall();
+        Double downfallBiome = (double) biome.getModifiedClimateSettings().downfall();
         boolean suitableDownfall = true;
         if( downfallBiome < (res[2] - res[3])){
             downfallBiomeText += "too dry";
@@ -233,20 +233,20 @@ public class GrowthInspectorItem extends Item
         Utils.sendMessageToPlayer(player, textComponent);
     }
 
-    private float[] DisplayCrop(Player player, String blockID){
-        List<Float> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(blockID);
+    private Double[] DisplayCrop(Player player, String blockID){
+        List<Double> allowed = BiomeSpecificGrowth.CROPCONFIG.getCharacteristicsForCrop(blockID);
         if (allowed == null) {
             //nothing listed for this plant, everythings fine stop blocking the event
-            return new float[0];
+            return new Double[0];
         }
         Utils.sendMessageToPlayer(player, "");
-        float baseTemperature = allowed.get(0);
-        float baseDownfall = allowed.get(1);
+        Double baseTemperature = allowed.get(0);
+        Double baseDownfall = allowed.get(1);
 
-        List<Float> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(blockID);
+        List<Double> variance = BiomeSpecificGrowth.CROPCONFIG.getVarianceForCrop(blockID);
 
-        float tempVariance = variance.get(0);
-        float downfallVariance = variance.get(1);
+        Double tempVariance = variance.get(0);
+        Double downfallVariance = variance.get(1);
         
         MutableComponent tempComponent = (Component.literal("Temperature Range: ").withStyle(ChatFormatting.GOLD))
             .append(Component.literal(""+ String.format("%.02f", (baseTemperature-tempVariance))).withStyle(ChatFormatting.WHITE))
@@ -260,7 +260,7 @@ public class GrowthInspectorItem extends Item
             .append(Component.literal("" + String.format("%.02f", (baseDownfall+downfallVariance))).withStyle(ChatFormatting.WHITE))
             ;
         Utils.sendMessageToPlayer(player, downfallComponent);
-        float res[] = new float[4];
+        Double res[] = new Double[4];
         res[0] = baseTemperature;
         res[1] = tempVariance;
         res[2] = baseDownfall;
@@ -308,13 +308,13 @@ public class GrowthInspectorItem extends Item
         }
     }
 
-    private float[] DisplayTree(Player player, String blockID){
+    private Double[] DisplayTree(Player player, String blockID){
         List<String> allowed = BiomeSpecificGrowth.TREECONFIG.getBiomesBySaplingId(blockID);
         if (allowed == null) {
             //nothing listed for this plant, everythings fine stop blocking the event
-            return new float[0];
+            return new Double[0];
         }
         Utils.sendMessageToPlayer(player, "");
-        return new float[0];
+        return new Double[0];
     }
 }
