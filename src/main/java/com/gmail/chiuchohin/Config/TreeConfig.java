@@ -61,27 +61,48 @@ public class TreeConfig
         spec.setConfig(configData);
     }
 
-    // public TreeConfig(ForgeConfigSpec.Builder builder) {
-
-    //     final CommentedFileConfig configData = CommentedFileConfig.builder(path)
-    //         .sync()
-    //         .autosave()
-    //         .writingMode(WritingMode.REPLACE)
-    //         .build();
-
-    //     configData.load();
-    //     spec.setConfig(configData);
-    // }
-
     static {
-        BUILDER.push("BiomeSpecificGrowth Tree Configs");
-
-        SAPLING_SUCCESS_RATE = BUILDER.comment("Sapling Growth Rate At Incorrect Biome. (Default: 0.2)").define("Sapling Success Rate", 0.2d);
-        
-        SAPLING_TURN_DEAD_WHEN_FAIL = BUILDER.comment("Will Saplings turn into a Dead bush when grow attempt failed. (Default: true)").define("Dead on failed", true);
-        
-        List<String> mSaplingWhiteList = new ArrayList<>();
         {
+            BUILDER.push("BiomeSpecificGrowth Tree Configs");
+
+            SAPLING_SUCCESS_RATE = BUILDER.comment("Sapling Growth Rate At Incorrect Biome. (Default: 0.2)").define("saplingSuccessRate", 0.2d);
+            SAPLING_TURN_DEAD_WHEN_FAIL = BUILDER.comment("Will Saplings turn into a Dead bush when grow attempt failed. (Default: true)").define("deadOnFailed", true);
+            
+            List<String> mSaplingItemMap = new ArrayList<>();
+            mSaplingItemMap.add(Items.ACACIA_SAPLING.getDescriptionId() + DELIM + Blocks.ACACIA_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.BIRCH_SAPLING.getDescriptionId() + DELIM + Blocks.BIRCH_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.SPRUCE_SAPLING.getDescriptionId() + DELIM + Blocks.SPRUCE_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.OAK_SAPLING.getDescriptionId() + DELIM + Blocks.OAK_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.DARK_OAK_SAPLING.getDescriptionId() + DELIM + Blocks.DARK_OAK_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.JUNGLE_SAPLING.getDescriptionId() + DELIM + Blocks.JUNGLE_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.CHERRY_SAPLING.getDescriptionId() + DELIM + Blocks.CHERRY_SAPLING.getDescriptionId());
+            mSaplingItemMap.add(Items.MANGROVE_PROPAGULE.getDescriptionId() + DELIM + Blocks.MANGROVE_PROPAGULE.getDescriptionId());
+            mSaplingItemMap.add(Blocks.AZALEA.getDescriptionId() + DELIM + Blocks.AZALEA.getDescriptionId());
+            mSaplingItemMap.add(Blocks.FLOWERING_AZALEA.getDescriptionId() + DELIM + DELIM + Blocks.FLOWERING_AZALEA.getDescriptionId());
+            //Let's do Vinery
+            mSaplingItemMap.add(
+                "block.vinery.apple_tree_sapling" 
+                + DELIM + 
+                "block.vinery.apple_tree_sapling"
+            );
+
+            mSaplingItemMap.add(
+                "block.vinery.dark_cherry_sapling" 
+                + DELIM + 
+                "block.vinery.dark_cherry_sapling"
+            );
+            
+            SAPLING_ITEM_BLOCK_MAP = BUILDER.comment(
+                "Map Item to Growable Block. (block.MODNAME.SAPLINGNAME)"+
+                "It only affect tooltips")
+                .define("saplingItemMap", mSaplingItemMap
+            );
+
+            BUILDER.pop();
+        }
+        {
+            BUILDER.push("Via Permissions");
+            List<String> mSaplingWhiteList = new ArrayList<>();
             mSaplingWhiteList.add(Blocks.ACACIA_SAPLING.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:savanna", 
                 "minecraft:shattered_savanna", 
@@ -286,47 +307,20 @@ public class TreeConfig
                     "terralith:skylands_spring"
                 }
             ));
+            SAPLING_WHITELIST_BIOMES = BUILDER.comment(
+                "Map growable block to CSV list of biomes no spaces, -> in between.  "+
+                "It SHOULD be fine to add modded saplings (block.MODNAME.SAPLINGNAME). An empty list means the sapling can grow nowhere.  "+ 
+                "Delete the key-entry for a sapling to let it grow everywhere.")
+                .define("saplingWhitelistBiome", mSaplingWhiteList
+            );
+            BUILDER.pop();
         }
-        SAPLING_WHITELIST_BIOMES = BUILDER.comment(
-            "Map growable block to CSV list of biomes no spaces, -> in between.  "+
-            "It SHOULD be fine to add modded saplings (block.MODNAME.SAPLINGNAME). An empty list means the sapling can grow nowhere.  "+ 
-            "Delete the key-entry for a sapling to let it grow everywhere.")
-            .define("SaplingWhitelistBiome", mSaplingWhiteList
-        );
 
         {
-            List<String> mSaplingItemMap = new ArrayList<>();
-            mSaplingItemMap.add(Items.ACACIA_SAPLING.getDescriptionId() + DELIM + Blocks.ACACIA_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.BIRCH_SAPLING.getDescriptionId() + DELIM + Blocks.BIRCH_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.SPRUCE_SAPLING.getDescriptionId() + DELIM + Blocks.SPRUCE_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.OAK_SAPLING.getDescriptionId() + DELIM + Blocks.OAK_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.DARK_OAK_SAPLING.getDescriptionId() + DELIM + Blocks.DARK_OAK_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.JUNGLE_SAPLING.getDescriptionId() + DELIM + Blocks.JUNGLE_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.CHERRY_SAPLING.getDescriptionId() + DELIM + Blocks.CHERRY_SAPLING.getDescriptionId());
-            mSaplingItemMap.add(Items.MANGROVE_PROPAGULE.getDescriptionId() + DELIM + Blocks.MANGROVE_PROPAGULE.getDescriptionId());
-            mSaplingItemMap.add(Blocks.AZALEA.getDescriptionId() + DELIM + Blocks.AZALEA.getDescriptionId());
-            mSaplingItemMap.add(Blocks.FLOWERING_AZALEA.getDescriptionId() + DELIM + DELIM + Blocks.FLOWERING_AZALEA.getDescriptionId());
-            //Let's do Vinery
-            mSaplingItemMap.add(
-                "block.vinery.apple_tree_sapling" 
-                + DELIM + 
-                "block.vinery.apple_tree_sapling"
-            );
-
-            mSaplingItemMap.add(
-                "block.vinery.dark_cherry_sapling" 
-                + DELIM + 
-                "block.vinery.dark_cherry_sapling"
-            );
-            
-            SAPLING_ITEM_BLOCK_MAP = BUILDER.comment(
-                "Map Item to Growable Block. (block.MODNAME.SAPLINGNAME)"+
-                "It only affect tooltips")
-                .define("SaplingItemMap", mSaplingItemMap
-            );
+            BUILDER.push("1. Dev Config");
+            ISDEBUG = BUILDER.comment("Should GrowthInspector Display item's description ID").define("isDebugMode", false);
+            BUILDER.pop();
         }
-        ISDEBUG = BUILDER.comment("Should GrowthInspector Display item's description ID").define("IsDebugMode", false);
-        BUILDER.pop();
         SPEC = BUILDER.build();
     }
 

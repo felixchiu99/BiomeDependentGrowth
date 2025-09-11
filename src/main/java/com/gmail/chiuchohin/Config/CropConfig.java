@@ -28,21 +28,20 @@ public class CropConfig
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     private static final String DELIM = "->";
     public static final ForgeConfigSpec SPEC;
-    public static final ForgeConfigSpec.ConfigValue<Double> CROP_SUCCESS_RATE;
 
+    public static final ForgeConfigSpec.ConfigValue<Double> CROP_SUCCESS_RATE;
     public static final ForgeConfigSpec.ConfigValue<Boolean> CROP_BREAK_WHEN_FAIL;
+    public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_ITEM_BLOCK_MAP;
 
     public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_TEMP;
     public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_TEMP_TOLERANCE;
     public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_DOWNFALL;
     public static final ForgeConfigSpec.ConfigValue<Double> CROP_DEFAULT_DOWNFALL_TOLERANCE;
-    
-    public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_WHITELIST_BIOMES;
-
     public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_CHARACTERISTICS;
     public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_VARIATIONS;
-
-    public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_ITEM_BLOCK_MAP;
+    
+    public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_WHITELIST_BIOMES;
+    public static final ForgeConfigSpec.ConfigValue<List<String>> CROP_BLACKLIST_BIOMES;
 
     private static final BooleanValue ISDEBUG;
     
@@ -67,365 +66,374 @@ public class CropConfig
         configData.load();
         spec.setConfig(configData);
     }
-    static {
-        BUILDER.push("BiomeSpecificGrowth Crop Configs");
-
-        CROP_SUCCESS_RATE = BUILDER.comment("Crop Growth Rate At Incorrect Biome. (Default: 0.2)").define("Crop Success Rate", 0.2d);
-        
-        CROP_DEFAULT_TEMP = BUILDER.comment("Crop Default Temperature. (Default: 0.5)").define("Crop Default Temperature", 0.5d);
-        CROP_DEFAULT_TEMP_TOLERANCE = BUILDER.comment("Crop Tolerance to Temperature.(+/-) (Default: 0.3)").define("Crop Temperature Tolerance", 0.3d);
-        CROP_DEFAULT_DOWNFALL = BUILDER.comment("Crop Default Downfall. (Default: 0.5)").define("Crop Default Downfall", 0.5d);
-        CROP_DEFAULT_DOWNFALL_TOLERANCE = BUILDER.comment("Crop Tolerance to Downfall.(+/-) (Default: 0.3)").define("Crop Downfall Tolerance", 0.3d);
-
-        CROP_BREAK_WHEN_FAIL = BUILDER.comment("Will Crop break when grow event failed. (Default: false)").define("Dead on failed",false);
-
+    static { 
+        BUILDER.comment(" 3 method of growth control is avalible," +
+            "In order of priority:"
+        );
+        BUILDER.comment("Blacklist > Whitelist > climate"
+        );
         {
-            List<String> mCropCharacteristicList = new ArrayList<>();
-            // temp, downfall
-            mCropCharacteristicList.add(Blocks.WHEAT.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.5",
-                "0.7"
-            }));
-            mCropCharacteristicList.add(Blocks.CARROTS.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(Blocks.POTATOES.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.5",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(Blocks.BEETROOTS.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(Blocks.SUGAR_CANE.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.7"
-            }));
-            mCropCharacteristicList.add(Blocks.PUMPKIN_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.5",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(Blocks.MELON_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.65"
-            }));
-            mCropCharacteristicList.add(Blocks.CACTUS.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "1.7",
-                "0"
-            }));
-            mCropCharacteristicList.add(Blocks.COCOA.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "1",
-                "1.2"
-            }));
-            mCropCharacteristicList.add(Blocks.SWEET_BERRY_BUSH.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.35",
-                "0.45"
-            }));
+            BUILDER.push("BiomeSpecificGrowth Crop Common Config ");
+            CROP_SUCCESS_RATE = BUILDER.comment(" Crop Growth Rate At Incorrect Biome. (Default: 0.2)").define("cropSuccessRate", 0.2d);
+            CROP_BREAK_WHEN_FAIL = BUILDER.comment(" Will Crop break when grow event failed. (Default: false)").define("deadOnFailed",false);
+            {
+                List<String> mCropItemMap = new ArrayList<>();
+                mCropItemMap.add(Items.WHEAT_SEEDS.getDescriptionId() + DELIM + Blocks.WHEAT.getDescriptionId());
+                mCropItemMap.add(Items.CARROT.getDescriptionId() + DELIM + Blocks.CARROTS.getDescriptionId());
+                mCropItemMap.add(Items.POTATO.getDescriptionId() + DELIM + Blocks.POTATOES.getDescriptionId());
+                mCropItemMap.add(Items.BEETROOT_SEEDS.getDescriptionId() + DELIM + Blocks.BEETROOTS.getDescriptionId());
+                mCropItemMap.add(Items.SUGAR_CANE.getDescriptionId() + DELIM + Blocks.SUGAR_CANE.getDescriptionId());
+                mCropItemMap.add(Items.PUMPKIN_SEEDS.getDescriptionId() + DELIM + Blocks.PUMPKIN_STEM.getDescriptionId());
+                mCropItemMap.add(Items.MELON_SEEDS.getDescriptionId() + DELIM + Blocks.MELON_STEM.getDescriptionId());
+                mCropItemMap.add(Items.CACTUS.getDescriptionId() + DELIM + Blocks.CACTUS.getDescriptionId());
+                mCropItemMap.add(Items.COCOA_BEANS.getDescriptionId() + DELIM + Blocks.COCOA.getDescriptionId());
+                mCropItemMap.add(Items.SWEET_BERRIES.getDescriptionId() + DELIM + Blocks.SWEET_BERRY_BUSH.getDescriptionId());
+                
+                //farmer's delight
+                mCropItemMap.add(
+                    "item.farmersdelight.rice" + 
+                    DELIM + 
+                    "block.farmersdelight.rice"
+                );
+                mCropItemMap.add(
+                    "item.farmersdelight.tomato_seeds" + 
+                    DELIM + 
+                    "block.farmersdelight.budding_tomatoes"
+                );
+                mCropItemMap.add(
+                    "item.farmersdelight.cabbage_seeds" + 
+                    DELIM + 
+                    "block.farmersdelight.cabbages"
+                );
+                mCropItemMap.add(
+                    "item.farmersdelight.onion" + 
+                    DELIM + 
+                    "block.farmersdelight.onions"
+                );
 
-            //farmer's delight
-            mCropCharacteristicList.add(
-                "block.farmersdelight.rice" + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.farmersdelight.budding_tomatoes" + DELIM + String.join(",", new String[] {
-                "0.7",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.farmersdelight.tomatoes" + DELIM + String.join(",", new String[] {
-                "0.7",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.farmersdelight.cabbages" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.farmersdelight.onions" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
+                //Let's do brewery
+                mCropItemMap.add(
+                    "block.brewery.barley_crop" + 
+                    DELIM + 
+                    "block.brewery.barley_crop"
+                );
+                mCropItemMap.add(
+                    "block.brewery.hops_crop" + 
+                    DELIM + 
+                    "block.brewery.hops_crop"
+                );
+                mCropItemMap.add(
+                    "item.brewery.corn_seed" + 
+                    DELIM + 
+                    "block.brewery.corn_crop"
+                );
+                
+                //Let's do vinery
+                mCropItemMap.add(
+                    "item.vinery.red_grape_seeds" + 
+                    DELIM + 
+                    "block.vinery.red_grape_bush"
+                );
+                mCropItemMap.add(
+                    "item.vinery.white_grape_seeds" + 
+                    DELIM + 
+                    "block.vinery.white_grape_bush"
+                );
+                mCropItemMap.add(
+                    "item.vinery.savanna_grape_seeds_red" + 
+                    DELIM + 
+                    "block.vinery.savanna_grape_bush_red"
+                );
+                mCropItemMap.add(
+                    "item.vinery.savanna_grape_seeds_white" + 
+                    DELIM + 
+                    "block.vinery.savanna_grape_bush_white"
+                );
+                mCropItemMap.add(
+                    "item.vinery.jungle_grape_seeds_red" + 
+                    DELIM + 
+                    "block.vinery.jungle_grape_bush_red"
+                );
+                mCropItemMap.add(
+                    "item.vinery.jungle_grape_seeds_white" + 
+                    DELIM + 
+                    "block.vinery.jungle_grape_bush_white"
+                );
+                mCropItemMap.add(
+                    "item.vinery.taiga_grape_seeds_red" + 
+                    DELIM + 
+                    "block.vinery.taiga_grape_bush_red"
+                );
+                mCropItemMap.add(
+                    "item.vinery.taiga_grape_seeds_white" + 
+                    DELIM + 
+                    "block.vinery.taiga_grape_bush_white"
+                );
 
-            //let's do brewery
-            mCropCharacteristicList.add(
-                "block.brewery.barley_crop" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.brewery.hops_crop" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.brewery.hops_crop_body" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.brewery.corn_crop" + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.4"
-            }));
-            
-            //let's do winery
-            mCropCharacteristicList.add(
-                "block.vinery.red_grape_bush" + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.white_grape_bush" + DELIM + String.join(",", new String[] {
-                "0.8",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.savanna_grape_bush_red" + DELIM + String.join(",", new String[] {
-                "1.7",
-                "0"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.savanna_grape_bush_white" + DELIM + String.join(",", new String[] {
-                "1.7",
-                "0"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.jungle_grape_bush_red" + DELIM + String.join(",", new String[] {
-                "1",
-                "1.2"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.jungle_grape_bush_white" + DELIM + String.join(",", new String[] {
-                "1",
-                "1.2"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.taiga_grape_bush_red" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-            mCropCharacteristicList.add(
-                "block.vinery.taiga_grape_bush_white" + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.5"
-            }));
-
-            CROP_CHARACTERISTICS = BUILDER.comment(
-                "Map growable block to temperature and Downfall for "+
-                "It SHOULD be fine to add modded Crop (block.MODNAME.CROPNAME). An empty list means the Crop will use the default temperature and downfall value"+ 
-                "Delete the key-entry for a Crop to let it grow everywhere.")
-                .define("CropCharacteristics", mCropCharacteristicList
-            );
+                CROP_ITEM_BLOCK_MAP = BUILDER.comment(
+                    "Map Item to Growable Block. (item.MODNAME.CROPNAME):(block.MODNAME.CROPNAME)"+
+                    "It only affect tooltips")
+                    .define("cropItemMap", mCropItemMap
+                );
+            }
+            BUILDER.pop();
         }
-
         {
-            List<String> mCropItemMap = new ArrayList<>();
-            mCropItemMap.add(Items.WHEAT_SEEDS.getDescriptionId() + DELIM + Blocks.WHEAT.getDescriptionId());
-            mCropItemMap.add(Items.CARROT.getDescriptionId() + DELIM + Blocks.CARROTS.getDescriptionId());
-            mCropItemMap.add(Items.POTATO.getDescriptionId() + DELIM + Blocks.POTATOES.getDescriptionId());
-            mCropItemMap.add(Items.BEETROOT_SEEDS.getDescriptionId() + DELIM + Blocks.BEETROOTS.getDescriptionId());
-            mCropItemMap.add(Items.SUGAR_CANE.getDescriptionId() + DELIM + Blocks.SUGAR_CANE.getDescriptionId());
-            mCropItemMap.add(Items.PUMPKIN_SEEDS.getDescriptionId() + DELIM + Blocks.PUMPKIN_STEM.getDescriptionId());
-            mCropItemMap.add(Items.MELON_SEEDS.getDescriptionId() + DELIM + Blocks.MELON_STEM.getDescriptionId());
-            mCropItemMap.add(Items.CACTUS.getDescriptionId() + DELIM + Blocks.CACTUS.getDescriptionId());
-            mCropItemMap.add(Items.COCOA_BEANS.getDescriptionId() + DELIM + Blocks.COCOA.getDescriptionId());
-            mCropItemMap.add(Items.SWEET_BERRIES.getDescriptionId() + DELIM + Blocks.SWEET_BERRY_BUSH.getDescriptionId());
-            
-            //farmer's delight
-            mCropItemMap.add(
-                "item.farmersdelight.rice" + 
-                DELIM + 
-                "block.farmersdelight.rice"
-            );
-            mCropItemMap.add(
-                "item.farmersdelight.tomato_seeds" + 
-                DELIM + 
-                "block.farmersdelight.budding_tomatoes"
-            );
-            mCropItemMap.add(
-                "item.farmersdelight.cabbage_seeds" + 
-                DELIM + 
-                "block.farmersdelight.cabbages"
-            );
-            mCropItemMap.add(
-                "item.farmersdelight.onion" + 
-                DELIM + 
-                "block.farmersdelight.onions"
-            );
+            BUILDER.push("Via Biome Temperature and Downfall");
+            CROP_DEFAULT_TEMP = BUILDER.comment(" Crop Default Temperature. (Default: 0.5)").define("cropDefaultTemperature", 0.5d);
+            CROP_DEFAULT_TEMP_TOLERANCE = BUILDER.comment(" Crop Tolerance to Temperature.(+/-) (Default: 0.3)").define("cropTemperatureTolerance", 0.3d);
+            CROP_DEFAULT_DOWNFALL = BUILDER.comment(" Crop Default Downfall. (Default: 0.5)").define("Crop Default Downfall", 0.5d);
+            CROP_DEFAULT_DOWNFALL_TOLERANCE = BUILDER.comment(" Crop Tolerance to Downfall.(+/-) (Default: 0.3)").define("cropDownfallTolerance", 0.3d);
 
-            //Let's do brewery
-            mCropItemMap.add(
-                "block.brewery.barley_crop" + 
-                DELIM + 
-                "block.brewery.barley_crop"
-            );
-            mCropItemMap.add(
-                "block.brewery.hops_crop" + 
-                DELIM + 
-                "block.brewery.hops_crop"
-            );
-            mCropItemMap.add(
-                "item.brewery.corn_seed" + 
-                DELIM + 
-                "block.brewery.corn_crop"
-            );
-            
-            //Let's do vinery
-            mCropItemMap.add(
-                "item.vinery.red_grape_seeds" + 
-                DELIM + 
-                "block.vinery.red_grape_bush"
-            );
-            mCropItemMap.add(
-                "item.vinery.white_grape_seeds" + 
-                DELIM + 
-                "block.vinery.white_grape_bush"
-            );
-            mCropItemMap.add(
-                "item.vinery.savanna_grape_seeds_red" + 
-                DELIM + 
-                "block.vinery.savanna_grape_bush_red"
-            );
-            mCropItemMap.add(
-                "item.vinery.savanna_grape_seeds_white" + 
-                DELIM + 
-                "block.vinery.savanna_grape_bush_white"
-            );
-            mCropItemMap.add(
-                "item.vinery.jungle_grape_seeds_red" + 
-                DELIM + 
-                "block.vinery.jungle_grape_bush_red"
-            );
-            mCropItemMap.add(
-                "item.vinery.jungle_grape_seeds_white" + 
-                DELIM + 
-                "block.vinery.jungle_grape_bush_white"
-            );
-            mCropItemMap.add(
-                "item.vinery.taiga_grape_seeds_red" + 
-                DELIM + 
-                "block.vinery.taiga_grape_bush_red"
-            );
-            mCropItemMap.add(
-                "item.vinery.taiga_grape_seeds_white" + 
-                DELIM + 
-                "block.vinery.taiga_grape_bush_white"
-            );
+            {
+                List<String> mCropCharacteristicList = new ArrayList<>();
+                // temp, downfall
+                mCropCharacteristicList.add(Blocks.WHEAT.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.5",
+                    "0.7"
+                }));
+                mCropCharacteristicList.add(Blocks.CARROTS.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(Blocks.POTATOES.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.5",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(Blocks.BEETROOTS.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(Blocks.SUGAR_CANE.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.7"
+                }));
+                mCropCharacteristicList.add(Blocks.PUMPKIN_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.5",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(Blocks.MELON_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.65"
+                }));
+                mCropCharacteristicList.add(Blocks.CACTUS.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "1.7",
+                    "0"
+                }));
+                mCropCharacteristicList.add(Blocks.COCOA.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "1",
+                    "1.2"
+                }));
+                mCropCharacteristicList.add(Blocks.SWEET_BERRY_BUSH.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.35",
+                    "0.45"
+                }));
 
-            CROP_ITEM_BLOCK_MAP = BUILDER.comment(
-                "Map Item to Growable Block. (item.MODNAME.CROPNAME):(block.MODNAME.CROPNAME)"+
-                "It only affect tooltips")
-                .define("CropItemMap", mCropItemMap
-            );
-        }
+                //farmer's delight
+                mCropCharacteristicList.add(
+                    "block.farmersdelight.rice" + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.farmersdelight.budding_tomatoes" + DELIM + String.join(",", new String[] {
+                    "0.7",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.farmersdelight.tomatoes" + DELIM + String.join(",", new String[] {
+                    "0.7",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.farmersdelight.cabbages" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.farmersdelight.onions" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
 
-        {
-            List<String> mCropVariationList = new ArrayList<>();
-            mCropVariationList.add(Blocks.PUMPKIN_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.35",
-                "0.5"
-            }));
-            mCropVariationList.add(Blocks.COCOA.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.4",
-                "0.3"
-            }));
-            mCropVariationList.add(Blocks.SWEET_BERRY_BUSH.getDescriptionId() + DELIM + String.join(",", new String[] {
-                "0.3",
-                "0.35"
-            }));
+                //let's do brewery
+                mCropCharacteristicList.add(
+                    "block.brewery.barley_crop" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.brewery.hops_crop" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.brewery.hops_crop_body" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.brewery.corn_crop" + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.4"
+                }));
+                
+                //let's do winery
+                mCropCharacteristicList.add(
+                    "block.vinery.red_grape_bush" + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.white_grape_bush" + DELIM + String.join(",", new String[] {
+                    "0.8",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.savanna_grape_bush_red" + DELIM + String.join(",", new String[] {
+                    "1.7",
+                    "0"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.savanna_grape_bush_white" + DELIM + String.join(",", new String[] {
+                    "1.7",
+                    "0"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.jungle_grape_bush_red" + DELIM + String.join(",", new String[] {
+                    "1",
+                    "1.2"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.jungle_grape_bush_white" + DELIM + String.join(",", new String[] {
+                    "1",
+                    "1.2"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.taiga_grape_bush_red" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
+                mCropCharacteristicList.add(
+                    "block.vinery.taiga_grape_bush_white" + DELIM + String.join(",", new String[] {
+                    "0.3",
+                    "0.5"
+                }));
 
-            //farmer's delight
-            mCropVariationList.add(
-                "block.farmersdelight.cabbages"
-                + DELIM + String.join(","
-                , new String[] {
+                CROP_CHARACTERISTICS = BUILDER.comment(
+                    "Map growable block to temperature and Downfall for "+
+                    "It SHOULD be fine to add modded Crop (block.MODNAME.CROPNAME). An empty list means the Crop will use the default temperature and downfall value"+ 
+                    "Delete the key-entry for a Crop to let it grow everywhere.")
+                    .define("cropCharacteristics", mCropCharacteristicList
+                );
+            }
+            {
+                List<String> mCropVariationList = new ArrayList<>();
+                mCropVariationList.add(Blocks.PUMPKIN_STEM.getDescriptionId() + DELIM + String.join(",", new String[] {
                     "0.35",
                     "0.5"
-                })
-            );
-            
-            //Let's do Brewery
-            mCropVariationList.add(
-                "block.brewery.barley_crop"
-                + DELIM + String.join(","
-                , new String[] {
+                }));
+                mCropVariationList.add(Blocks.COCOA.getDescriptionId() + DELIM + String.join(",", new String[] {
+                    "0.4",
+                    "0.3"
+                }));
+                mCropVariationList.add(Blocks.SWEET_BERRY_BUSH.getDescriptionId() + DELIM + String.join(",", new String[] {
                     "0.3",
-                    "0.25"
-                })
-            );
-            mCropVariationList.add(
-                "block.brewery.hops_crop"
-                + DELIM + String.join(","
-                , new String[] {
-                    "0.4",
-                    "0.3"
-                })
-            );
-            mCropVariationList.add(
-                "block.brewery.hops_crop_body"
-                + DELIM + String.join(","
-                , new String[] {
-                    "0.4",
-                    "0.4"
-                })
-            );
-            mCropVariationList.add(
-                "block.brewery.corn_crop"
-                + DELIM + String.join(","
-                , new String[] {
-                    "0.4",
-                    "0.4"
-                })
-            );
-            //Let's do vinery
-            mCropVariationList.add(
-                "block.vinery.jungle_grape_bush_red"
-                + DELIM + String.join(","
-                , new String[] {
-                    "0.4",
-                    "0.3"
-                })
-            );
-            mCropVariationList.add(
-                "block.vinery.jungle_grape_bush_white"
-                + DELIM + String.join(","
-                , new String[] {
-                    "0.4",
-                    "0.3"
-                })
-            );
+                    "0.35"
+                }));
+
+                //farmer's delight
+                mCropVariationList.add(
+                    "block.farmersdelight.cabbages"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.35",
+                        "0.5"
+                    })
+                );
+                
+                //Let's do Brewery
+                mCropVariationList.add(
+                    "block.brewery.barley_crop"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.3",
+                        "0.25"
+                    })
+                );
+                mCropVariationList.add(
+                    "block.brewery.hops_crop"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.4",
+                        "0.3"
+                    })
+                );
+                mCropVariationList.add(
+                    "block.brewery.hops_crop_body"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.4",
+                        "0.4"
+                    })
+                );
+                mCropVariationList.add(
+                    "block.brewery.corn_crop"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.4",
+                        "0.4"
+                    })
+                );
+                //Let's do vinery
+                mCropVariationList.add(
+                    "block.vinery.jungle_grape_bush_red"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.4",
+                        "0.3"
+                    })
+                );
+                mCropVariationList.add(
+                    "block.vinery.jungle_grape_bush_white"
+                    + DELIM + String.join(","
+                    , new String[] {
+                        "0.4",
+                        "0.3"
+                    })
+                );
 
 
-            CROP_VARIATIONS = BUILDER.comment(
-                "Map growable block to Variation tolerance in temperature and Downfall "+
-                "It SHOULD be fine to add modded Crop. An empty list means the Crop will use the default temperature and downfall value"+ 
-                "Delete the key-entry for a Crop to let it grow everywhere.")
-                .define("CropVariations", mCropVariationList
-            );
+                CROP_VARIATIONS = BUILDER.comment(
+                    "Map growable block to Variation tolerance in temperature and Downfall "+
+                    "It SHOULD be fine to add modded Crop. An empty list means the Crop will use the default temperature and downfall value"+ 
+                    "Delete the key-entry for a Crop to let it grow everywhere.")
+                    .define("cropVariations", mCropVariationList
+                );
+            }
+
+            BUILDER.pop();
         }
 
-        List<String> mCropWhiteList = new ArrayList<>();
         {
+            BUILDER.push("Via Permissions");
+            List<String> mCropWhiteList = new ArrayList<>();
             ArrayList<String> plainsList = new ArrayList<String>();
             plainsList.add("minecraft:plains");
             plainsList.add("minecraft:sunflower_plains");
 
             ArrayList<String> riverList = new ArrayList<String>();
             riverList.add("minecraft:river");
-            {
-                ArrayList<String> wheatList = new ArrayList<String>();
-                wheatList.addAll(plainsList);
-                wheatList.addAll(riverList);
-                wheatList.add("minecraft:swamp");
-                wheatList.add("minecraft:beach");
-                String[] wheat = Arrays.copyOf(wheatList.toArray(), wheatList.size(), String[].class);
-                
-                mCropWhiteList.add(Blocks.WHEAT.getDescriptionId() + DELIM + String.join(",", wheat));
-            }
+            
+            ArrayList<String> wheatList = new ArrayList<String>();
+            wheatList.addAll(plainsList);
+            wheatList.addAll(riverList);
+            wheatList.add("minecraft:swamp");
+            wheatList.add("minecraft:beach");
+            String[] wheat = Arrays.copyOf(wheatList.toArray(), wheatList.size(), String[].class);
+            
+            mCropWhiteList.add(Blocks.WHEAT.getDescriptionId() + DELIM + String.join(",", wheat));
+            
             mCropWhiteList.add(Blocks.CARROTS.getDescriptionId() + DELIM + String.join(",", new String[] {
                 "minecraft:taiga", 
                 "minecraft:savanna", 
@@ -519,17 +527,38 @@ public class CropConfig
                 "minecraft:deep_lukewarm_ocean",
             };
             mCropWhiteList.add(Blocks.SUGAR_CANE.getDescriptionId() + DELIM + String.join(",", reeds));
+
+            CROP_WHITELIST_BIOMES = BUILDER.comment(
+                "Map growable block to CSV list of biomes no spaces, -> in between.  "+
+                "It SHOULD be fine to add modded Crop (block.MODNAME.CROPBLOCKNAME)." +
+                "Crops will grow normally if in specified biome." +
+                "can be use with Temperature/downfall system")
+                .define("cropWhitelistBiome", mCropWhiteList
+            );
+
+            List<String> mCropBlackList = new ArrayList<>();
+            {
+                String[] cactuaBlackList = Arrays.copyOf(riverList.toArray(), riverList.size(), String[].class);
+                mCropBlackList.add(Blocks.CACTUS.getDescriptionId() + DELIM + String.join(",", cactuaBlackList));
+            }
+            CROP_BLACKLIST_BIOMES = BUILDER.comment(
+                "Map growable block to CSV list of biomes no spaces, -> in between.  "+
+                "It SHOULD be fine to add modded Crop (block.MODNAME.CROPBLOCKNAME)." +
+                "Crops fail to grow if in specified biome." +
+                "can be use with Temperature/downfall system"
+                )
+                .define("cropWhitelistBiome", mCropBlackList
+            );
+
+            BUILDER.pop();
         }
-        CROP_WHITELIST_BIOMES = BUILDER.comment(
-            "Map growable block to CSV list of biomes no spaces, -> in between.  "+
-            "It SHOULD be fine to add modded Crop (block.MODNAME.SAPLINGNAME). An empty list means the Crop can grow nowhere.  "+ 
-            "Delete the key-entry for a Crop to let it grow everywhere.")
-            .define("CropWhitelistBiome", mCropWhiteList
-        );
 
-        ISDEBUG = BUILDER.comment("Should GrowthInspector Display item's description ID").define("IsDebugMode", false);
+        {
+            BUILDER.push("Dev Config");
+                ISDEBUG = BUILDER.comment(" Should GrowthInspector Display item's description ID").define("isDebugMode", false);
+            BUILDER.pop();
+        }
 
-        BUILDER.pop();
         SPEC = BUILDER.build();
     }
 
